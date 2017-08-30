@@ -21,7 +21,7 @@ Contents:
    :name: mastertoc
 
    pre_requisites
-   setup_guide
+   setup_guide_centos6.7
    app_conf
    webapollo_conf
    rst/about
