@@ -1,9 +1,8 @@
-.. _setup_centos_6:
-
-Old Setup Guide (For CentOS 6.*)
+Setup Guide
 ===========
 
-This setup guide is tested in Centos 6.7 and django 1.8.12
+This setup guide is tested in CentOS 7.2 and django 1.8.12.
+For CentOS 6.*, you may want the :ref:`setup_centos_6`.
 
 Note: The following variables may be used in path names; substitute as appropriate:: 
 
@@ -12,8 +11,6 @@ Note: The following variables may be used in path names; substitute as appropria
    <app-home>  :  the root directory of the i5K application, e.g., /app/local/i5k
    <virt-env>  :  the root directory of the virtualenv this set up creates. 
    <git-home>  :  the directory containing the django-blast git repository, e.g. <user-home>/git
-
-
 
 Project Applications 
 --------------------
@@ -33,7 +30,7 @@ Generate metadata cache::
 
     yum makecache
     
-Python 2.7.8
+Python 2.7.13
 ------------
 
 Install necessary packages::
@@ -42,14 +39,14 @@ Install necessary packages::
     sudo yum -y install zlib-devel bzip2-devel openssl-devel ncurses-devel sqlite-devel 
     sudo yum -y install readline-devel tk-devel gdbm-devel db4-devel libpcap-devel xz-devel python-devel
 
-Install python 2.7.8 from source::
+Install python 2.7.13 from source::
 
     cd <user-home>
-    wget http://www.python.org/ftp/python/2.7.8/Python-2.7.8.tar.xz  
-    tar -xf Python-2.7.8.tar.xz
+    wget http://www.python.org/ftp/python/2.7.13/Python-2.7.13.tar.xz  
+    tar -xf Python-2.7.13.tar.xz
     
     # Configure as a shared library:
-    cd Python-2.7.8
+    cd Python-2.7.13
     ./configure --prefix=/usr/local --enable-unicode=ucs4 --enable-shared LDFLAGS="-Wl,-rpath /usr/local/lib"
 
     # Compile and install:
@@ -59,12 +56,12 @@ Install python 2.7.8 from source::
     # Update PATH:
     export PATH="/usr/local/bin:$PATH"
     
-    # Checking Python version (output should be: Python 2.7.8):
+    # Checking Python version (output should be: Python 2.7.13):
     python2.7 -V
 
     # Cleanup if desired:
     cd ..
-    rm -rf Python-2.7.8.tar.xz Python-2.7.8
+    rm -rf Python-2.7.13.tar.xz Python-2.7.13
     
 Install pip and virtualenv::
 
@@ -86,40 +83,6 @@ Build a separate virtualenv::
     source py2.7/bin/activate
     
     
-Python Modules and Packages
----------------------------
-
-Install additional Python packages::
-
-    cd <virt-env>
-     
-    # Cut, paste and run the following bash script.
-    # If any installation fails script halts:  
-    for package in                         \
-        "django==1.8.12"                   \
-        "markdown==2.6.6"                  \
-        "cssmin==0.2.0"                    \
-        "django-pipeline==1.6.8"           \
-        "djangorestframework==2.3.4"       \
-        "django-rest-swagger==0.3.5"       \
-        "django-suit==0.2.18"              \
-        "django-axes"                      \
-        "docutils==0.12"                   \
-        "jsmin==2.0.11"                    \
-        "pycrypto==2.6.1"                  \
-        "python-memcached==1.57"           \
-        "python-social-auth==0.2.16"       \
-        "requests-oauthlib==0.6.1"         \
-        "wsgiref==0.1.2"                   \
-        "pillow==2.2.2"                    \
-        "django-simple-captcha==0.4.5"
-    do
-        echo -e "\nInstalling $package..."
-        if ! yes | pip install $package ; then 
-            echo -e "\nInstallation of package $package FAILED"
-            break
-        fi
-    done
     
 RabbitMQ
 --------
@@ -128,10 +91,10 @@ Install RabbitMQ Server::
 
     cd <user-home> 
 
-    # Install RHEL/CentOS 6.8 64-Bit Extra Packages for Enterprise Linux (Epel). 
-    # The 6.8 Epel caters for CentOS 6.*:
-    wget https://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
-    sudo rpm -ivh epel-release-6-8.noarch.rpm
+    # Install RHEL/CentOS 7.10 64-Bit Extra Packages for Enterprise Linux (Epel). 
+    # The 7.10 Epel caters for CentOS 7.*:
+    wget http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-10.noarch.rpm
+    sudo rpm -ivh epel-release-7-10.noarch.rpm
 
     # Install Erlang:
     sudo yum -y install erlang
@@ -146,7 +109,7 @@ Install RabbitMQ Server::
     sudo /sbin/service rabbitmq-server start
 
     # Clean up:
-    rm epel-release-6-8.noarch.rpm
+    rm epel-release-7-10.noarch.rpm
 
     
 Celery
@@ -250,14 +213,27 @@ Install PostgreSQL::
     # Restart:
     sudo service postgresql-9.5 restart
 
-    # Install pycopg2:
-    pip install psycopg2==2.6
+Python Modules and Packages
+---------------------------
+
+Install additional Python packages::
+
+    cd <virt-env>
+    pip install -r requirements.txt
 
  
 Migrate Schema to to PostgreSQL
 ------------------------------- 
 
 Run migrate::
+
+    # Create necessary log files
+    sudo mkdir /var/log/django/
+    sudo touch /var/log/django/django.log
+    sudo chmod 666 /var/log/django/django.log
+    sudo mkdir /var/log/i5k
+    sudo touch /var/log/i5k/i5k.log
+    sudo chmod 666 /var/log/i5k/i5k.log
 
     cd <virt-env>
     python manage.py migrate
