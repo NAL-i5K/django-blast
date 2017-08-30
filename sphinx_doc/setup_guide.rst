@@ -112,34 +112,6 @@ Install RabbitMQ Server::
     rm epel-release-7-10.noarch.rpm
 
     
-Celery
-------
-
-Install celery in the virtualenv and configure::
-
-    # At this point <virt-env> has all project files
-    # including celery config files.
-    cd <virt-env>
-    pip install celery==3.1.23
-
-    # Copy files:
-    sudo cp celeryd /etc/init.d
-    sudo cp celerybeat /etc/init.d
-    sudo cp celeryd.sysconfig /etc/default/celeryd
-    sudo cp celerybeat.sysconfig /etc/default/celerybeat
-    
-    # Sudo edit '/etc/default/celeryd' as follows: 
-    CELERYD_CHDIR="<virt-env>"
-    CELERYD_MULTI="<virt-env>/py2.7/bin/celery multi"
-    
-    # Sudo edit '/etc/default/celerybeat' as follows:
-    CELERYBEAT_CHDIR="<virt-env>"
-    CELERY_BIN="<virt-env>/py2.7/bin/celery"
-
-    # Set as daemon:
-    sudo chkconfig celeryd on
-    sudo chkconfig celerybeat on
-
 Memcached
 ---------
 
@@ -221,7 +193,35 @@ Install additional Python packages::
     cd <virt-env>
     pip install -r requirements.txt
 
- 
+
+Celery
+------
+
+Install celery in the virtualenv and configure::
+
+    # At this point <virt-env> has all project files
+    # including celery config files.
+    cd <virt-env>
+
+    # Copy files:
+    sudo cp celeryd /etc/init.d
+    sudo cp celerybeat /etc/init.d
+    sudo cp celeryd.sysconfig /etc/default/celeryd
+    sudo cp celerybeat.sysconfig /etc/default/celerybeat
+    
+    # Sudo edit '/etc/default/celeryd' as follows: 
+    CELERYD_CHDIR="<virt-env>"
+    CELERYD_MULTI="<virt-env>/py2.7/bin/celery multi"
+    
+    # Sudo edit '/etc/default/celerybeat' as follows:
+    CELERYBEAT_CHDIR="<virt-env>"
+    CELERY_BIN="<virt-env>/py2.7/bin/celery"
+
+    # Set as daemon:
+    sudo chkconfig celeryd on
+    sudo chkconfig celerybeat on
+
+
 Migrate Schema to to PostgreSQL
 ------------------------------- 
 
